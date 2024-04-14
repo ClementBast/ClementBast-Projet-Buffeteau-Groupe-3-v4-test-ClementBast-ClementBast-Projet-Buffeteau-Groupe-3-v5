@@ -1,21 +1,52 @@
-.couleurDeFond
-{
+.couleurDeFond {
     -fx-background-color: lightblue;
 }
 
-.boutonCouleur
-{
+.boutonCouleur {
     -fx-background-color:  #82E3F8;
 }
 
-.btnMenu:hover
-{
-    -fx-background-color : white;
-    -fx-background-radius : 30 0 0 30;
+.btnMenu:hover {
+    -fx-background-color: white;
+    -fx-background-radius: 30 30 30 30;
+    -fx-border-radius: 30 30 30 30;
     -fx-font-family: "Comic Sans MS";
 }
 
-.ap
-{
-    -fx-background-color : white;
+.btnConnexion:hover {
+    -fx-background-color: darkblue;
+    -fx-background-radius: 30 30 30 30;
+    -fx-border-radius: 30 30 30 30;
+    -fx-font-family: "Arial Bold";
+}
+
+.ap {
+    -fx-background-color: white;
+}
+
+.small-text-field {
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 200px;
+}
+.header {
+    -fx-background-color: #3498DB;
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2C3E50;
+}
+
+.text-field {
+    -fx-font-size: 12px;
+    -fx-pref-height: 25px;
+    -fx-pref-width: 200px;
+    -fx-alignment: center;
+}
+
+.button {
+    -fx-font-size: 14px;
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
 }

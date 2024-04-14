@@ -23,4 +23,9 @@ public class Matiere {
     public void setSousMatiere(String sousMatiere) {
         this.sousMatiere = sousMatiere;
     }
-}
+
+    @Override
+    public String toString() {
+        return sousMatiere;
+    }
+    }

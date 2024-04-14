@@ -24,5 +24,17 @@ public class ServiceUtilisateur {
         return unId;
     }
 
+    public String getRoleUtilisateurByMail(String email) throws SQLException {
+        ps = uneCnx.prepareStatement("SELECT user.role FROM user WHERE email = ?");
+        ps.setString(1, email);
+        rs = ps.executeQuery();
 
+        if (rs.next()) {
+            String role = rs.getString("role");
+            return role;
+        } else {
+            // Gestion d'erreur si aucun utilisateur avec cet e-mail n'est trouvé
+            return null;
+        }
+    }
 }

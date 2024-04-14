@@ -38,26 +38,24 @@ public class ServicesMatieres {
     public ObservableList<Matiere> getAllSousMatieresByMatieres(String matiere) throws SQLException {
         ObservableList<Matiere> lesSousMatieres = FXCollections.observableArrayList();
 
-        PreparedStatement ps = uneCnx.prepareStatement("SELECT designation, sous_matiere FROM matiere WHERE designation = ? ");
-        ps.setString(1, (matiere));
+        PreparedStatement ps = uneCnx.prepareStatement("SELECT designation, sous_matiere FROM matiere WHERE designation = ?");
+        ps.setString(1, matiere);
         rs = ps.executeQuery();
 
-        while (rs.next())
-        {
-            Matiere sousMatieres = new Matiere(matiere, rs.getString(2));
-            ObservableList lesSousMatiere = FXCollections.observableArrayList();
-
-            String[] lesSousMatSans = rs.getString(2).split("#");
-            for (String sousMatSans : lesSousMatSans) {
-                if (!sousMatSans.isEmpty()) {
-                Matiere sousMatMatiere = new Matiere(matiere, sousMatSans);
-
-                lesSousMatieres.add(sousMatMatiere);
+        while (rs.next()) {
+            String sousMatieresStr = rs.getString(2);
+            if (sousMatieresStr != null && !sousMatieresStr.isEmpty()) {
+                String[] lesSousMatSans = sousMatieresStr.split("#");
+                for (String sousMatSans : lesSousMatSans) {
+                    if (!sousMatSans.isEmpty()) {
+                        Matiere sousMatMatiere = new Matiere(matiere, sousMatSans);
+                        lesSousMatieres.add(sousMatMatiere);
                     }
+                }
             }
-
         }
         return lesSousMatieres;
     }
+
 
 }

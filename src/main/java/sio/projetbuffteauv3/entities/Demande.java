@@ -3,32 +3,32 @@ package sio.projetbuffteauv3.entities;
 import java.util.Date;
 
 public class Demande {
-    private String matiere;
-    private String sousmatiere;
+    private String matiereDem;
+    private String sousMatiereDem;
     private  int id;
     private String date;
 
-    public Demande(String matiere, String sousmatiere, int id, String date){
-        this.matiere = matiere;
-        this.sousmatiere = sousmatiere;
+    public Demande(String matiereDem, String sousMatiereDem, int id, String date) {
+        this.matiereDem = matiereDem;
+        this.sousMatiereDem = sousMatiereDem;
         this.id = id;
         this.date = date;
     }
 
-    public String getMatiere() {
-        return matiere;
+    public String getMatiereDem() {
+        return matiereDem;
     }
 
-    public void setMatiere(String matiere) {
-        this.matiere = matiere;
+    public void setMatiereDem(String matiereDem) {
+        this.matiereDem = matiereDem;
     }
 
-    public String getSousmatiere() {
-        return sousmatiere;
+    public String getSousMatiereDem() {
+        return sousMatiereDem;
     }
 
-    public void setSousmatiere(String sousmatiere) {
-        this.sousmatiere = sousmatiere;
+    public void setSousMatiereDem(String sousMatiereDem) {
+        this.sousMatiereDem = sousMatiereDem;
     }
 
     public int getId() {
