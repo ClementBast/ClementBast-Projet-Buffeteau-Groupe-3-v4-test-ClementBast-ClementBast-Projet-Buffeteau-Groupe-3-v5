@@ -26,13 +26,14 @@ public class ServicesDemandes {
                 "SELECT matiere.designation, demande.sous_matiere, demande.id, demande.date_updated\n" +
                         "FROM demande\n" +
                         "INNER JOIN matiere ON demande.id_matiere = matiere.id\n" +
+                        "WHERE demande.status = 1\n" +
                         "GROUP BY matiere.designation, demande.date_updated, demande.id;");
 
 
         rs = ps.executeQuery();
         while(rs.next())
         {
-             Demande laDemande = new Demande(rs.getString(1),rs.getString(2),rs.getInt(3),rs.getString(4));
+            Demande laDemande = new Demande(rs.getString(1),rs.getString(2),rs.getInt(3),rs.getString(4));
             lesDemandes.add(laDemande);
         }
         return lesDemandes;
@@ -54,6 +55,30 @@ public class ServicesDemandes {
             lesDemandes.add(laDemande);
         }
         return lesDemandes;
+    }
+    public int getNombreDemandesStatutDeux() throws SQLException {
+        int nombreDemandes = 0;
+
+        // Connexion à la base de données
+        System.out.println("Connexion à la base de données établie : " + !uneCnx.isClosed());
+
+        // Préparation de la requête pour compter le nombre de demandes avec un statut de 2
+        PreparedStatement ps = uneCnx.prepareStatement(
+                "SELECT COUNT(*) FROM demande WHERE status = 2");
+
+        // Exécution de la requête
+        ResultSet rs = ps.executeQuery();
+
+        // Récupération du nombre de demandes
+        if (rs.next()) {
+            nombreDemandes = rs.getInt(1);
+        }
+
+        // Fermeture explicite de la PreparedStatement et du ResultSet
+        rs.close();
+        ps.close();
+
+        return nombreDemandes;
     }
 
     public ObservableList<Demande> GetAllDemandesByIdUser(int idUser) throws SQLException{
@@ -168,3 +193,4 @@ public class ServicesDemandes {
     }
 
 }
+

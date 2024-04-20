@@ -60,7 +60,19 @@ public class ServicesCompetences implements Initializable {
         }
         return lesSousMatCompetences;
     }
-
+    public int getIdCompetenceFromDemande(int idDemande) throws SQLException {
+        ps = uneCnx.prepareStatement( "SELECT c.id " +
+                "FROM competence c " +
+                "JOIN demande d ON c.sous_matiere = d.sous_matiere " +
+                "WHERE d.id = ?");
+        ps.setInt(1, idDemande);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("id");
+        } else {
+            throw new SQLException("echec");
+        }
+    }
     public void insererCompetence(String matiere, int idUtilisateur, String sousMat) throws SQLException {
         // Vérifier si la compétence existe déjà pour cet utilisateur et cette matière
         boolean competenceExistante = checkCompetenceExistante(matiere, idUtilisateur);
@@ -119,20 +131,6 @@ public class ServicesCompetences implements Initializable {
             return "";
         }
     }
-    public int getIdCompetenceByIdUser(int idUser) throws SQLException {
-        int idCompetence = -1; // Valeur par défaut si aucune compétence n'est trouvée
-
-        PreparedStatement ps = uneCnx.prepareStatement("SELECT id FROM competence WHERE id_user = ?");
-        ps.setInt(1, idUser);
-
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            idCompetence = rs.getInt(1);
-        }
-
-        return idCompetence;
-    }
     private boolean checkSousMatieresExistantes(String matiere, int idUtilisateur) throws SQLException {
         ps = uneCnx.prepareStatement("SELECT sous_matiere FROM competence WHERE id_matiere = (SELECT id FROM matiere WHERE designation = ?) AND id_user = ?");
         ps.setString(1, matiere);
@@ -157,4 +155,27 @@ public class ServicesCompetences implements Initializable {
         ps.setInt(2, idUtilisateur);
         ps.executeUpdate();
     }
+    public int getIdCompetenceParDemande(int idDemande) throws SQLException {
+        System.out.println("Méthode getIdCompetenceParDemande exécutée avec l'id de demande : " + idDemande);
+        int idCompetence = 0;
+        try (Connection uneCnx = ConnexionBDD.getCnx();
+             PreparedStatement ps = uneCnx.prepareStatement(
+                     "SELECT c.id " +
+                             "FROM competence c " +
+                             "INNER JOIN demande d ON c.id_matiere = d.id_matiere " +
+                             "WHERE d.id = ?")) {
+            ps.setInt(1, idDemande);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+
+                    idCompetence = rs.getInt("id");
+                }
+            }
+        }
+
+        return idCompetence;
+    }
+
+
 }

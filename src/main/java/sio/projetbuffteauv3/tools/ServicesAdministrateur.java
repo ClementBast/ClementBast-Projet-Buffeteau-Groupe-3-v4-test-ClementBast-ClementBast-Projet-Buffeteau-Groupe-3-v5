@@ -3,18 +3,18 @@ package sio.projetbuffteauv3.tools;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import sio.projetbuffteauv3.entities.Demande;
+import sio.projetbuffteauv3.entities.Matiere;
 import sio.projetbuffteauv3.entities.Salle;
 import sio.projetbuffteauv3.entities.Soutien;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
+
 public class ServicesAdministrateur {
     private Connection uneCnx;
     private PreparedStatement ps;
     private ResultSet rs;
-
+    LocalDate DateActuelle = LocalDate.now();
     public ServicesAdministrateur()
     {
         uneCnx = ConnexionBDD.getCnx();
@@ -31,6 +31,7 @@ public class ServicesAdministrateur {
             throw e; // Vous pouvez gérer cette exception selon vos besoins
         }
     }
+
     public void creerSousMatiere(String matiere, String sousMatiere) throws SQLException {
         String query = "UPDATE matiere SET sous_matiere = CONCAT(sous_matiere, '#', ?) WHERE designation = ?";
         try {
@@ -44,6 +45,7 @@ public class ServicesAdministrateur {
             throw e;
         }
     }
+
     public void renommerSousMatiere(String nouvelleSousMatiere, String ancienneSousMatiere, String matiere) throws SQLException {
         // Mettre à jour la sous-matière dans la base de données
         String query = "SELECT sous_matiere FROM matiere WHERE designation = ?";
@@ -86,37 +88,37 @@ public class ServicesAdministrateur {
 
         String query = "UPDATE salle SET code_salle = ? WHERE id = ?";
 
-            ps = uneCnx.prepareStatement(query);
-            ps.setInt(1, nouveauCodeSalle);
-            ps.setInt(2, idSalle);
-            ps.executeUpdate();
-        }
+        ps = uneCnx.prepareStatement(query);
+        ps.setInt(1, nouveauCodeSalle);
+        ps.setInt(2, idSalle);
+        ps.executeUpdate();
+    }
 
-        public ObservableList<Salle> getAllSalles() throws SQLException {
+    public ObservableList<Salle> getAllSalles() throws SQLException {
         ObservableList<Salle> salles = FXCollections.observableArrayList();
 
         String query = "SELECT * FROM salle";
-            ps = uneCnx.prepareStatement(query);
-            rs = ps.executeQuery();
+        ps = uneCnx.prepareStatement(query);
+        rs = ps.executeQuery();
 
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String codeSalle = rs.getString("code_salle");
-                int etage = rs.getInt("etage");
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String codeSalle = rs.getString("code_salle");
+            int etage = rs.getInt("etage");
 
-                Salle salle = new Salle(id, codeSalle, etage);
-                salles.add(salle);
-            }
+            Salle salle = new Salle(id, codeSalle, etage);
+            salles.add(salle);
+        }
         return salles;
     }
 
     public void creerSalle(int numero) throws SQLException {
         String codeSalle = "Salle " + numero;
         String query = "INSERT INTO salle (code_salle, etage) VALUES (?, 0)";
-            ps = uneCnx.prepareStatement(query);
-            ps.setString(1, codeSalle);
-            ps.executeUpdate();
-        }
+        ps = uneCnx.prepareStatement(query);
+        ps.setString(1, codeSalle);
+        ps.executeUpdate();
+    }
     public void renommerMatiere(String matiere, String nouveauNom) throws SQLException {
         String sql = "UPDATE matiere SET designation = ? WHERE designation = ?";
         try {
@@ -129,27 +131,83 @@ public class ServicesAdministrateur {
             System.out.println("Erreur lors du renommage de la matière : " + e.getMessage());
         }
     }
+    public ObservableList<Matiere> getSousMatiereFromCompetence(int idCompetence) throws SQLException {
+        ObservableList<Matiere> sousMatieres = FXCollections.observableArrayList();
+        String query = "SELECT sous_matiere FROM competence WHERE id = ?";
+
+        try (Connection connection = ConnexionBDD.getCnx();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idCompetence);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String sousMatiere = resultSet.getString("sous_matiere");
+                // Créer un objet Matiere avec la matiere correspondante
+                Matiere matiere = new Matiere("", sousMatiere); // Vous devez fournir la matière correspondante
+                sousMatieres.add(matiere);
+            }
+        } catch (SQLException e) {
+            // Gérer l'exception SQLException
+            e.printStackTrace();
+        }
+
+        return sousMatieres;
+    }
+
+
+    public int GetIdMatiere(String nomMatiere) throws SQLException {
+        ps = uneCnx.prepareStatement("SELECT matiere.id FROM matiere WHERE matiere.designation=?");
+        ps.setString(1,nomMatiere);
+        rs = ps.executeQuery();
+
+        // Vérifier si l'ensemble de résultats contient des données
+        if (rs.next()) {
+            int idMatiere = rs.getInt(1);
+            return idMatiere;
+        } else {
+            // Gérer le cas où aucun résultat n'est trouvé
+            throw new SQLException("Aucune matière trouvée pour la désignation : " + nomMatiere);
+        }
+    }
+
 
     public ObservableList<Demande> getDemandesWithStatusOne() throws SQLException {
         ObservableList<Demande> demandes = FXCollections.observableArrayList();
-        String query = "SELECT matiere.designation, demande.sous_matiere, demande.id, demande.date_updated\n" +
-                "FROM demande\n" +
-                "JOIN matiere ON demande.id_matiere = matiere.id\n" +
-                "WHERE demande.status = 1";
+        PreparedStatement ps = uneCnx.prepareStatement("SELECT demande.id, demande.sous_matiere " +
+                "FROM demande " +
+                "WHERE demande.status = 1");
 
-        try (Connection connection = ConnexionBDD.getCnx();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                String matiereDem = resultSet.getString(1);
-                String sousMatiereDem = resultSet.getString(2);
-                int id = resultSet.getInt(3);
-                String date = resultSet.getString(4);
-                Demande demande = new Demande(matiereDem, sousMatiereDem, id, date);
-                demandes.add(demande);
-            }
+        ResultSet resultSet = ps.executeQuery(); // Exécuter la requête SELECT
+
+        while (resultSet.next()) {
+            int idDemande = resultSet.getInt("id");
+            String sousMatiere = resultSet.getString("sous_matiere");
+            demandes.add(new Demande("", sousMatiere, idDemande, ""));
         }
+
+        resultSet.close();
+        ps.close();
 
         return demandes;
     }
+
+    public void ajouterSalle(int idDemande, int idSalle) throws SQLException {
+        // Connexion à la base de données
+        System.out.println("Connexion à la base de données établie : " + !uneCnx.isClosed());
+
+        // Préparation de la requête pour insérer la salle dans la table soutien
+        PreparedStatement ps = uneCnx.prepareStatement(
+                "UPDATE soutien SET id_salle = ?, status = 2 WHERE id_demande = ?");
+
+        // Paramétrage de la PreparedStatement
+        ps.setInt(1, idSalle);
+        ps.setInt(2, idDemande);
+
+        // Exécution de la requête
+        ps.executeUpdate();
+
+        // Fermeture explicite de la PreparedStatement
+        ps.close();
+    }
+
 }

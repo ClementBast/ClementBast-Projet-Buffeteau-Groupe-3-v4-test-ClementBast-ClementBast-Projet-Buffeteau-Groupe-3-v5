@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -13,9 +14,12 @@ import sio.projetbuffteauv3.entities.*;
 import sio.projetbuffteauv3.tools.*;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class EtudiantController implements Initializable {
@@ -125,15 +129,15 @@ public class EtudiantController implements Initializable {
     private Button btnValiderLesAides;
     @javafx.fxml.FXML
     private AnchorPane apStatsEtudiant;
-    @javafx.fxml.FXML
-    private TreeView tvStatsEtudfiant;
+
+
     ServicesDemandes servicesDemandes = new ServicesDemandes();
     ServiceConnexion serviceConnexion = new ServiceConnexion();
     ServicesCompetences servicesCompetences = new ServicesCompetences();
     ServiceUtilisateur serviceUtilisateur = new ServiceUtilisateur();
     ServicesMatieres servicesMatieres = new ServicesMatieres();
     ServiceSoutien serviceSoutien = new ServiceSoutien();
-
+    GraphiqueController GraphiqueController;
     Utilisateur unUtilisateur;
     @javafx.fxml.FXML
     private TableView <Matiere>tvCreerCompSousMat;
@@ -145,6 +149,12 @@ public class EtudiantController implements Initializable {
     private TableColumn tcCreerCompMat;
     @javafx.fxml.FXML
     private ListView lvSousMatModifDem;
+    @javafx.fxml.FXML
+    private TextField tfCommentaireLesAides;
+    @javafx.fxml.FXML
+    private PieChart graphSoutients;
+    @javafx.fxml.FXML
+    private TextField tfNbDemandesLesAides;
 
     public void initDatas (Utilisateur c)
     {
@@ -236,15 +246,41 @@ public class EtudiantController implements Initializable {
     }
 
     @javafx.fxml.FXML
-    public void btnLesAidesClicked(Event event) {
+    public void btnLesAidesClicked(Event event) throws SQLException {
         apLesAides.toFront();
+        tcLesAidesMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("matiereDem"));
+        tcLesAidesSousMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("sousMatiereDem"));
+        tcLesAidesId.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("id"));
+        tcLesAidesDateFin.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("date"));
+
+        servicesDemandes = new ServicesDemandes();
+        tvLesAides.setItems(servicesDemandes.GetAllDemandes());
+
     }
 
     @javafx.fxml.FXML
-    public void btnStatsClicked(Event event) {
-        apStatsEtudiant.toFront();
-    }
+    public void btnStatsClicked(Event event) throws SQLException {
 
+        this.GraphiqueController = new GraphiqueController();
+        apStatsEtudiant.toFront();
+        graphSoutients.getData().clear();
+
+        ObservableList<PieChart.Data> datasGraph2 = FXCollections.observableArrayList();
+        HashMap<String,Integer> datasGraphique2 = GraphiqueController.GetDatasGraphique2();
+
+        for (String valeur : datasGraphique2.keySet())
+        {
+            datasGraph2.add(new PieChart.Data(valeur,datasGraphique2.get(valeur) ));
+        }
+        graphSoutients.setData(datasGraph2);
+
+        for (PieChart.Data entry : graphSoutients.getData()) {
+            Tooltip t = new Tooltip(entry.getPieValue()+ " : "+entry.getName());
+            t.setStyle("-fx-background-color:#3D9ADA");
+            Tooltip.install(entry.getNode(), t);
+        }
+        tfNbDemandesLesAides.setText(String.valueOf(servicesDemandes.getNombreDemandesStatutDeux()));
+    }
     @javafx.fxml.FXML
     public void btnCreerCompClicked(Event event) throws SQLException
     {
@@ -372,7 +408,7 @@ public class EtudiantController implements Initializable {
         for (Matiere sousMatiere : lesSousMatieres) {
             listeSousMat += "#" + sousMatiere.getSousMatiere();
         }
-        // Modification ici : Convertissez Timestamp en java.sql.Date pour dateUpdated
+
         servicesDemandes.insererDemande(matiereSelec, idUser, listeSousMat, java.sql.Date.valueOf(dateFinDemande), new java.sql.Date(dateUpdated.getTime()));
 
     }
@@ -415,35 +451,23 @@ public class EtudiantController implements Initializable {
 
 
     @javafx.fxml.FXML
-    public void btnValiderLesAidesClicked(Event event) throws SQLException {
-        Demande selectedDemande = (Demande) tvLesAides.getSelectionModel().getSelectedItem();
-        Soutien soutien = new Soutien(0, selectedDemande.getId(), 62, "2024-03-08", 0);
+    public void btnValiderLesAidesClicked(Event event) throws SQLException  {
+            Demande selectedDemande = (Demande) tvLesAides.getSelectionModel().getSelectedItem();
+            ServiceSoutien serviceSoutien = new ServiceSoutien();
+            Date datedebut = Date.valueOf(LocalDate.parse("2023-12-12"));
+            int idCompetence = servicesCompetences.getIdCompetenceFromDemande(selectedDemande.getId());
+            int idDemande = selectedDemande.getId();
+            String com = tfCommentaireLesAides.getText();
 
-        // Créer une instance de ServiceSoutien
-        ServiceSoutien serviceSoutien = new ServiceSoutien();
 
-        // Insérer le soutien dans la base de données
-        serviceSoutien.insererSoutien(soutien);
 
+            serviceSoutien.insererSoutien(idDemande, idCompetence, datedebut, datedebut, com, 1);
     }
+
+
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
-        try {
 
-            maCnx = new ConnexionBDD();
-            tcLesAidesMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("matiereDem"));
-            tcLesAidesSousMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("sousMatiereDem"));
-            tcLesAidesId.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("id"));
-            tcLesAidesDateFin.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("date"));
-
-            servicesDemandes = new ServicesDemandes();
-            tvLesAides.setItems(servicesDemandes.GetAllDemandes());
-        }
-         catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @javafx.fxml.FXML

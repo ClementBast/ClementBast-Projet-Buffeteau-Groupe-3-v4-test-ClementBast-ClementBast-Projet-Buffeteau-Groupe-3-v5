@@ -14,6 +14,7 @@ import sio.projetbuffteauv3.tools.*;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 
@@ -137,8 +138,6 @@ public class AdminController implements Initializable {
     private TableView tvSalleSoutient;
     @javafx.fxml.FXML
     private TableColumn tcSalleSoutient;
-    @javafx.fxml.FXML
-    private TextField tfCommentaireSoutient;
 
     @javafx.fxml.FXML
     public void btnMatAdminClicked(Event event) throws SQLException {
@@ -154,7 +153,6 @@ public class AdminController implements Initializable {
         apSousMatAdmin.toFront();
 
     }
-    // test
 
     @javafx.fxml.FXML
     public void btnSalleAdminClicked(Event event) throws SQLException {
@@ -166,19 +164,31 @@ public class AdminController implements Initializable {
     @javafx.fxml.FXML
     public void btnSoutienClicked(Event event) throws SQLException {
         apSoutienAdmin.toFront();
+        ObservableList<Demande> demandes = servicesAdministrateur.getDemandesWithStatusOne();
+        tvListeSoutienAdmin.setItems(demandes);
+
 
         tcSalleSoutient.setCellValueFactory(new PropertyValueFactory<Salle, String>("codeSalle"));
         tvSalleSoutient.setItems(servicesAdministrateur.getAllSalles());
 
-        tcIdSoutienAdmin.setCellValueFactory(new  PropertyValueFactory<Demande, String>("id"));
-        tcSousMatAdminSoutient.setCellValueFactory(new  PropertyValueFactory<Demande, String>("sousMatiereDem"));
-        ObservableList<Demande> demandes = servicesAdministrateur.getDemandesWithStatusOne();
+        tcIdSoutienAdmin.setCellValueFactory(new PropertyValueFactory<Demande, String>("id"));
+        tcSousMatAdminSoutient.setCellValueFactory(new PropertyValueFactory<Demande, String>("sousMatiereDem"));
 
-        tvListeSoutienAdmin.setItems(demandes);
+    }
+    @javafx.fxml.FXML
+    public void btnTraiterSoutientClicked(Event event) throws SQLException {
+        LocalDate currentDate = LocalDate.now();
+        Demande selectedDemande = (Demande) tvListeSoutienAdmin.getSelectionModel().getSelectedItem();
+        int idDemande = selectedDemande.getId();
+        String matiere = selectedDemande.getMatiereDem();
 
-//a avancer
+        // Récupération de l'identifiant de la salle sélectionnée
+        Salle selectedSalle = (Salle) tvSalleSoutient.getSelectionModel().getSelectedItem();
+        int idSalle = selectedSalle.getId();
 
-        }
+        // Appel de la méthode pour ajouter la salle à la demande spécifiée
+        servicesAdministrateur.ajouterSalle(idDemande, idSalle);
+    }
 
     @javafx.fxml.FXML
     public void btnStatistiquesAdminClicked(Event event) {
@@ -327,7 +337,5 @@ public class AdminController implements Initializable {
         servicesAdministrateur.creerSalle(newSalle);
     }
 
-    @javafx.fxml.FXML
-    public void btnTraiterSoutientClicked(Event event) {
-    }
+
 }
