@@ -1,0 +1,2 @@
+Compte utilisateur : sabine.castaing@lerebours.org / mdp: sabcas
+Compte admin :test / mdp : test@ler.com /mdp : test
