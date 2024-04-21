@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b58e637-2b01-4d53-a585-47eaa86b52ed" name="Changes" comment="V11">
+    <list default="true" id="9b58e637-2b01-4d53-a585-47eaa86b52ed" name="Changes" comment="V12">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sio/projetbuffteauv3/EtudiantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sio/projetbuffteauv3/EtudiantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sio/projetbuffteauv3/tools/ServiceUtilisateur.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sio/projetbuffteauv3/tools/ServiceUtilisateur.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sio/projetbuffteauv3/tools/ServicesDemandes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sio/projetbuffteauv3/tools/ServicesDemandes.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,13 +106,22 @@
       <option name="project" value="LOCAL" />
       <updated>1713712425798</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="V12">
+      <option name="closed" value="true" />
+      <created>1713718462134</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1713718462134</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="V8" />
     <MESSAGE value="V9" />
     <MESSAGE value="V11" />
-    <option name="LAST_COMMIT_MESSAGE" value="V11" />
+    <MESSAGE value="V12" />
+    <option name="LAST_COMMIT_MESSAGE" value="V12" />
   </component>
 </project>

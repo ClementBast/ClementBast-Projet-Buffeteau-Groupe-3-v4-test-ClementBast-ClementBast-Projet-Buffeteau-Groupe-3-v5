@@ -238,8 +238,20 @@ public class EtudiantController implements Initializable {
     }
 
     @javafx.fxml.FXML
-    public void btnLesAidesClicked(Event event) {
+    public void btnLesAidesClicked(Event event) throws SQLException {
         apLesAides.toFront();
+        tcLesAidesMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("matiereDem"));
+        tcLesAidesSousMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("sousMatiereDem"));
+        tcLesAidesId.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("id"));
+        tcLesAidesDateFin.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("date"));
+
+        servicesDemandes = new ServicesDemandes();
+        tvLesAides.setItems(servicesDemandes.GetAllDemandes());
+
+        tcModifCompMat.setCellValueFactory(new PropertyValueFactory<>("matiere"));
+        tcModifCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiere"));
+        tvModifCompMat.setItems(servicesMatieres.getAllMatieres());
+
     }
 
     @javafx.fxml.FXML
@@ -522,17 +534,7 @@ public class EtudiantController implements Initializable {
         try {
 
             maCnx = new ConnexionBDD();
-            tcLesAidesMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("matiereDem"));
-            tcLesAidesSousMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("sousMatiereDem"));
-            tcLesAidesId.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("id"));
-            tcLesAidesDateFin.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("date"));
 
-            servicesDemandes = new ServicesDemandes();
-            tvLesAides.setItems(servicesDemandes.GetAllDemandes());
-
-            tcModifCompMat.setCellValueFactory(new PropertyValueFactory<>("matiere"));
-            tcModifCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiere"));
-            tvModifCompMat.setItems(servicesMatieres.getAllMatieres());
 
         }
         catch (ClassNotFoundException e) {
