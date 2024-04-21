@@ -89,6 +89,4 @@ public class ServiceSoutien {
         // Fermeture explicite de la PreparedStatement de mise à jour du statut de la demande
         psUpdateDemande.close();
     }
-
-
 }

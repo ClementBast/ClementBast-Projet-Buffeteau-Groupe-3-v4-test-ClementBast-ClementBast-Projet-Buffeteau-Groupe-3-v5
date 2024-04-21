@@ -15,7 +15,7 @@
          <children>
             <Label layoutX="31.0" layoutY="33.0" prefHeight="35.0" prefWidth="268.0" text="Projet Help Le Rebours">
                <font>
-                  <Font size="24.0" />
+                  <Font name="System Bold Italic" size="50.0" />
                </font>
             </Label>
          </children>
@@ -56,7 +56,7 @@
       </AnchorPane>
       <AnchorPane fx:id="apSousMatAdmin" layoutX="112.0" layoutY="100.0" prefHeight="302.0" prefWidth="560.0" styleClass="ap" stylesheets="@../../Styles/mesStyles.css">
          <children>
-            <Button fx:id="btnModifSousMatAdmin" layoutX="320.0" layoutY="50.0" mnemonicParsing="false" onMouseClicked="#btnModifSousMatAdminClicked" prefHeight="30.0" prefWidth="140.0" text="Modifier Sous Matière" />
+            <Button fx:id="btnModifSousMatAdmin" layoutX="307.0" layoutY="50.0" mnemonicParsing="false" onMouseClicked="#btnModifSousMatAdminClicked" prefHeight="30.0" prefWidth="166.0" text="Modifier Sous Matière" />
             <Button fx:id="btnCreerSousMatAdmin" layoutX="100.0" layoutY="50.0" mnemonicParsing="false" onMouseClicked="#btnCreerSousMatAdminClicked" prefHeight="30.0" prefWidth="140.0" text="Créer Sous Matière" />
             <TableView fx:id="tvListeSousMatAdmin" layoutX="307.0" layoutY="102.0" prefHeight="174.0" prefWidth="166.0">
               <columns>
@@ -101,7 +101,7 @@
             <Label layoutX="21.0" layoutY="137.0" text="Matière selectionnée :" />
             <TextField fx:id="tfMatSelectCreerSousMat" layoutX="21.0" layoutY="155.0" prefHeight="26.0" prefWidth="165.0" />
             <TextField fx:id="tfSousMatACreer" layoutX="222.0" layoutY="155.0" />
-            <Label layoutX="222.0" layoutY="136.0" prefHeight="18.0" prefWidth="116.0" text="Sous-matière a creer :" />
+            <Label layoutX="222.0" layoutY="136.0" prefHeight="20.0" prefWidth="140.0" text="Sous-matière a créer :" />
             <Button fx:id="btnCreerSousMat" layoutX="402.0" layoutY="155.0" mnemonicParsing="false" onMouseClicked="#btnCreerSousMatClicked" text="Ajouter" />
          </children>
       </AnchorPane>
@@ -132,7 +132,7 @@
             <TextField fx:id="tfNomMatiereAModif" layoutX="39.0" layoutY="126.0" />
             <TextField fx:id="tfNewNomMatiere" layoutX="225.0" layoutY="126.0" />
             <Label layoutX="39.0" layoutY="101.0" text="Matiere selectionnée :" />
-            <Label layoutX="225.0" layoutY="100.0" prefHeight="18.0" prefWidth="140.0" text="Nouveau nom (matière) :" />
+            <Label layoutX="225.0" layoutY="100.0" prefHeight="20.0" prefWidth="166.0" text="Nouveau nom (matière) :" />
             <Button fx:id="btnUpdateMat" layoutX="407.0" layoutY="126.0" mnemonicParsing="false" onMouseClicked="#btnUpdateMatClicked" text="Mettre à jour" />
          </children>
       </AnchorPane>

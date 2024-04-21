@@ -6,7 +6,7 @@ public class Matiere {
     public Matiere(String matiere, String sousMatiere){
         this.matiere = matiere;
         this.sousMatiere = sousMatiere;
-}
+    }
 
     public String getMatiere() {
         return matiere;
@@ -28,4 +28,5 @@ public class Matiere {
     public String toString() {
         return sousMatiere;
     }
-    }
+
+}

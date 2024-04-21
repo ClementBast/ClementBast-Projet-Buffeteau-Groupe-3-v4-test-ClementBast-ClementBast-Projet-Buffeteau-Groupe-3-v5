@@ -60,10 +60,6 @@ public class EtudiantController implements Initializable {
     @javafx.fxml.FXML
     private AnchorPane apModifierComp;
     @javafx.fxml.FXML
-    private ComboBox cboModifSousMat;
-    @javafx.fxml.FXML
-    private TextField txtModifCompMat;
-    @javafx.fxml.FXML
     private Button btnModifierCompValider;
     @javafx.fxml.FXML
     private AnchorPane apDemandes;
@@ -150,11 +146,23 @@ public class EtudiantController implements Initializable {
     @javafx.fxml.FXML
     private ListView lvSousMatModifDem;
     @javafx.fxml.FXML
+    private TableView tvModifCompMat;
+    @javafx.fxml.FXML
+    private TableColumn tcModifCompMat;
+    @javafx.fxml.FXML
+    private TableView tvModifCompSousMat;
+    @javafx.fxml.FXML
+    private TableColumn tcModifCompSousMat;
+    @javafx.fxml.FXML
     private TextField tfCommentaireLesAides;
     @javafx.fxml.FXML
     private PieChart graphSoutients;
     @javafx.fxml.FXML
     private TextField tfNbDemandesLesAides;
+    @javafx.fxml.FXML
+    private TextField tfNbDemandesLesAides1;
+    @javafx.fxml.FXML
+    private TextField tfNbDemandesLesAides2;
 
     public void initDatas (Utilisateur c)
     {
@@ -173,25 +181,14 @@ public class EtudiantController implements Initializable {
 
     }
 
-    public void afficherApComp() {
-        apComp.toFront();
-
-        // Affichage d'un message d'alerte pour indiquer la connexion réussie
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Connexion réussie");
-        alert.setContentText("Vous êtes connecté avec succès !");
-        alert.setHeaderText("");
-        alert.showAndWait();
-    }
-
     @javafx.fxml.FXML
     public void tvCompMatClicked(Event event) throws SQLException {
         Competence compSelec = (Competence) tvCompMatières.getSelectionModel().getSelectedItem();
         String matiere = compSelec.getMatiereComp();
         int idUser = serviceUtilisateur.getIdUtilisateurByMail(unUtilisateur.getEmail());
 
-       tcCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiereComp"));
-       tvCompSousMat.setItems(servicesCompetences.GetSousMatiereCompetences(idUser, matiere));
+        tcCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiereComp"));
+        tvCompSousMat.setItems(servicesCompetences.GetSousMatiereCompetences(idUser, matiere));
 
         System.out.println(tvCompMatières.getSelectionModel().getSelectedItem().toString());
     }
@@ -226,61 +223,25 @@ public class EtudiantController implements Initializable {
     }
 
     @javafx.fxml.FXML
-    public void btnMesAidesClicked(Event event) {
-        try {
-            apMesAides.toFront();
+    public void btnMesAidesClicked(Event event) throws SQLException {
+        apMesAides.toFront();
 
-            int idUser = serviceUtilisateur.getIdUtilisateurByMail(unUtilisateur.getEmail());
+        int idUser = serviceUtilisateur.getIdUtilisateurByMail(unUtilisateur.getEmail());
 
-            tcMesAidesMat.setCellValueFactory(new PropertyValueFactory<>("matiereDem"));
-            tcMesAidesSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiereDem"));
-            tcMesAidesId.setCellValueFactory(new PropertyValueFactory<>("id"));
-            tcMesAidesDateFin.setCellValueFactory(new PropertyValueFactory<>("date"));
+        tcMesAidesMat.setCellValueFactory(new PropertyValueFactory<>("matiereDem"));
+        tcMesAidesSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiereDem"));
+        tcMesAidesId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        tcMesAidesDateFin.setCellValueFactory(new PropertyValueFactory<>("date"));
 
-            tvMesAides.setItems(servicesDemandes.GetAllDemandesByIdUser(idUser));
-        } catch (SQLException e) {
-            // Gérer l'exception
-            e.printStackTrace(); // Afficher la trace de la pile pour déboguer
-            // Autres actions à prendre, par exemple afficher un message d'erreur à l'utilisateur
-        }
+        tvMesAides.setItems(servicesDemandes.GetAllDemandesByIdUser(idUser));
+
     }
 
     @javafx.fxml.FXML
-    public void btnLesAidesClicked(Event event) throws SQLException {
+    public void btnLesAidesClicked(Event event) {
         apLesAides.toFront();
-        tcLesAidesMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("matiereDem"));
-        tcLesAidesSousMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("sousMatiereDem"));
-        tcLesAidesId.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("id"));
-        tcLesAidesDateFin.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("date"));
-
-        servicesDemandes = new ServicesDemandes();
-        tvLesAides.setItems(servicesDemandes.GetAllDemandes());
-
     }
 
-    @javafx.fxml.FXML
-    public void btnStatsClicked(Event event) throws SQLException {
-
-        this.GraphiqueController = new GraphiqueController();
-        apStatsEtudiant.toFront();
-        graphSoutients.getData().clear();
-
-        ObservableList<PieChart.Data> datasGraph2 = FXCollections.observableArrayList();
-        HashMap<String,Integer> datasGraphique2 = GraphiqueController.GetDatasGraphique2();
-
-        for (String valeur : datasGraphique2.keySet())
-        {
-            datasGraph2.add(new PieChart.Data(valeur,datasGraphique2.get(valeur) ));
-        }
-        graphSoutients.setData(datasGraph2);
-
-        for (PieChart.Data entry : graphSoutients.getData()) {
-            Tooltip t = new Tooltip(entry.getPieValue()+ " : "+entry.getName());
-            t.setStyle("-fx-background-color:#3D9ADA");
-            Tooltip.install(entry.getNode(), t);
-        }
-        tfNbDemandesLesAides.setText(String.valueOf(servicesDemandes.getNombreDemandesStatutDeux()));
-    }
     @javafx.fxml.FXML
     public void btnCreerCompClicked(Event event) throws SQLException
     {
@@ -310,18 +271,24 @@ public class EtudiantController implements Initializable {
     @javafx.fxml.FXML
     public void btnCreerCompValiderClicked(Event event) throws SQLException {
 
-            ServicesCompetences servicesCompetences = new ServicesCompetences();
-            String matiereSelec = ((Matiere)tvCreerCompMat.getSelectionModel().getSelectedItem()).getMatiere();
-            int idUser = serviceUtilisateur.getIdUtilisateurByMail(unUtilisateur.getEmail());
+        ServicesCompetences servicesCompetences = new ServicesCompetences();
+        String matiereSelec = ((Matiere)tvCreerCompMat.getSelectionModel().getSelectedItem()).getMatiere();
+        int idUser = serviceUtilisateur.getIdUtilisateurByMail(unUtilisateur.getEmail());
 
-            ObservableList<Matiere> lesSousMatieres = tvCreerCompSousMat.getSelectionModel().getSelectedItems();
-            String listeSousMat = "";
+        ObservableList<Matiere> lesSousMatieres = tvCreerCompSousMat.getSelectionModel().getSelectedItems();
+        String listeSousMat = "";
 
-            for (Matiere sousMatiere : lesSousMatieres) {
-                listeSousMat += "#" + sousMatiere.getSousMatiere();
-            }
-            servicesCompetences.supprimerCompetence(matiereSelec, idUser);
-            servicesCompetences.insererCompetence(matiereSelec, idUser, listeSousMat);
+        for (Matiere sousMatiere : lesSousMatieres) {
+            listeSousMat += "#" + sousMatiere.getSousMatiere();
+        }
+        //servicesCompetences.supprimerCompetence(matiereSelec, idUser);
+        servicesCompetences.insererCompetence(matiereSelec, idUser, listeSousMat);
+
+        Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+        alerte.setTitle("Création de compétence réussie");
+        alerte.setContentText("Vous avez créer une compétence");
+        alerte.setHeaderText("");
+        alerte.showAndWait();
     }
 
 
@@ -331,7 +298,45 @@ public class EtudiantController implements Initializable {
     }
 
     @javafx.fxml.FXML
-    public void btnModifierCompValiderClicked(Event event) {
+    public void btnModifierCompValiderClicked(Event event) throws SQLException {
+        // Récupérer la compétence sélectionnée dans tvCompMatière
+        Competence ancienneCompetence = (Competence) tvCompMatières.getSelectionModel().getSelectedItem();
+        if (ancienneCompetence != null) {
+            // Récupérer la nouvelle compétence sélectionnée dans tvModifCompMat
+            Matiere nouvelleMatiere = (Matiere) tvModifCompMat.getSelectionModel().getSelectedItem();
+            if (nouvelleMatiere != null) {
+                // Supprimer l'ancienne compétence
+                servicesCompetences.supprimerCompetence(ancienneCompetence.getMatiereComp(), unUtilisateur.getId());
+                // Récupérer les sous-matières sélectionnées dans tvModifCompSousMat
+                ObservableList<Matiere> nouvellesSousMatieres = tvModifCompSousMat.getSelectionModel().getSelectedItems();
+                String listeSousMat = "";
+                for (Matiere sousMatiere : nouvellesSousMatieres) {
+                    listeSousMat += "#" + sousMatiere.getSousMatiere();
+                }
+                // Insérer la nouvelle compétence
+                servicesCompetences.insererCompetence(nouvelleMatiere.getMatiere(), unUtilisateur.getId(), listeSousMat);
+                // Afficher un message de succès
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Modification réussie");
+                alert.setContentText("La compétence a été modifiée avec succès.");
+                alert.setHeaderText("");
+                alert.showAndWait();
+            } else {
+                // Afficher un message d'erreur si aucune nouvelle compétence n'est sélectionnée
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setContentText("Veuillez sélectionner une nouvelle matière.");
+                alert.setHeaderText("");
+                alert.showAndWait();
+            }
+        } else {
+            // Afficher un message d'erreur si aucune compétence n'est sélectionnée dans tvCompMatière
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setContentText("Veuillez sélectionner une compétence à modifier.");
+            alert.setHeaderText("");
+            alert.showAndWait();
+        }
     }
 
     @javafx.fxml.FXML
@@ -393,9 +398,6 @@ public class EtudiantController implements Initializable {
         }
     }
 
-
-
-
     @javafx.fxml.FXML
     public void btnValiderDemClicked(Event event) throws SQLException {
         ServicesDemandes servicesDemandes = new ServicesDemandes();
@@ -408,9 +410,13 @@ public class EtudiantController implements Initializable {
         for (Matiere sousMatiere : lesSousMatieres) {
             listeSousMat += "#" + sousMatiere.getSousMatiere();
         }
-
+        // Modification ici : Convertissez Timestamp en java.sql.Date pour dateUpdated
         servicesDemandes.insererDemande(matiereSelec, idUser, listeSousMat, java.sql.Date.valueOf(dateFinDemande), new java.sql.Date(dateUpdated.getTime()));
-
+        Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+        alerte.setTitle("Création de demande réussie");
+        alerte.setContentText("Vous avez créer une demande");
+        alerte.setHeaderText("");
+        alerte.showAndWait();
     }
 
     @javafx.fxml.FXML
@@ -438,7 +444,11 @@ public class EtudiantController implements Initializable {
             servicesDemandes.supprimerDemande(matiereSelected, idUser, demandeSelec.getId());
             servicesDemandes.insererDemande(matiereSelected, idUser, listeSousMat, java.sql.Date.valueOf(dpDateModifDem.getValue()), new java.sql.Date(System.currentTimeMillis()));
 
-            System.out.println("Demande modifiée avec succès.");
+            Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+            alerte.setTitle("Modification de demande réussie");
+            alerte.setContentText("Vous avez modifier une demande");
+            alerte.setHeaderText("");
+            alerte.showAndWait();
 
             // Rediriger vers la vue des demandes une fois la modification effectuée
             apDemandes.toFront();
@@ -452,38 +462,83 @@ public class EtudiantController implements Initializable {
 
     @javafx.fxml.FXML
     public void btnValiderLesAidesClicked(Event event) throws SQLException  {
-            Demande selectedDemande = (Demande) tvLesAides.getSelectionModel().getSelectedItem();
-            ServiceSoutien serviceSoutien = new ServiceSoutien();
-            Date datedebut = Date.valueOf(LocalDate.parse("2023-12-12"));
-            int idCompetence = servicesCompetences.getIdCompetenceFromDemande(selectedDemande.getId());
-            int idDemande = selectedDemande.getId();
-            String com = tfCommentaireLesAides.getText();
+        Demande selectedDemande = (Demande) tvLesAides.getSelectionModel().getSelectedItem();
+        ServiceSoutien serviceSoutien = new ServiceSoutien();
+        Date datedebut = Date.valueOf(LocalDate.parse("2023-12-12"));
+        int idCompetence = servicesCompetences.getIdCompetenceFromDemande(selectedDemande.getId());
+        int idDemande = selectedDemande.getId();
+        String com = tfCommentaireLesAides.getText();
 
 
 
-            serviceSoutien.insererSoutien(idDemande, idCompetence, datedebut, datedebut, com, 1);
+        serviceSoutien.insererSoutien(idDemande, idCompetence, datedebut, datedebut, com, 1);
     }
-
-
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
+        try {
 
+            maCnx = new ConnexionBDD();
+            tcLesAidesMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("matiereDem"));
+            tcLesAidesSousMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("sousMatiereDem"));
+            tcLesAidesId.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("id"));
+            tcLesAidesDateFin.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("date"));
+
+            servicesDemandes = new ServicesDemandes();
+            tvLesAides.setItems(servicesDemandes.GetAllDemandes());
+
+            tcModifCompMat.setCellValueFactory(new PropertyValueFactory<>("matiere"));
+            tcModifCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiere"));
+            tvModifCompMat.setItems(servicesMatieres.getAllMatieres());
+
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @javafx.fxml.FXML
     public void tvCreerDemMatClicked(Event event) throws SQLException {
         String matiereSelec = ((Matiere)tvCreerDemMat.getSelectionModel().getSelectedItem()).getMatiere();
         ObservableList<Matiere> lesSousMatieres = FXCollections.observableArrayList(servicesMatieres.getAllSousMatieresByMatieres(matiereSelec));
-        System.out.println(matiereSelec);
-        for (Matiere sousMatiere : lesSousMatieres) {
-            System.out.println(sousMatiere.getSousMatiere());
-        }
 
-        System.out.println(lesSousMatieres);
         tcCreerDemSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiere"));
         tvDemCreerSousMat.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tvDemCreerSousMat.setItems(lesSousMatieres);
     }
+
+    @javafx.fxml.FXML
+    public void tvModifCompMatClicked(Event event) throws SQLException {
+        String matiereSelec = ((Matiere)tvModifCompMat.getSelectionModel().getSelectedItem()).getMatiere();
+        ObservableList<Matiere> lesSousMatieres = FXCollections.observableArrayList(servicesMatieres.getAllSousMatieresByMatieres(matiereSelec));
+
+        tcModifCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiere"));
+        tvModifCompSousMat.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        tvModifCompSousMat.setItems(lesSousMatieres);
+    }
+
+    @javafx.fxml.FXML
+    public void btnStatsClicked(Event event) throws SQLException {
+
+        this.GraphiqueController = new GraphiqueController();
+        apStatsEtudiant.toFront();
+        graphSoutients.getData().clear();
+
+        ObservableList<PieChart.Data> datasGraph2 = FXCollections.observableArrayList();
+        HashMap<String,Integer> datasGraphique2 = GraphiqueController.GetDatasGraphique2();
+
+        for (String valeur : datasGraphique2.keySet())
+        {
+            datasGraph2.add(new PieChart.Data(valeur,datasGraphique2.get(valeur) ));
+        }
+        graphSoutients.setData(datasGraph2);
+
+        for (PieChart.Data entry : graphSoutients.getData()) {
+            Tooltip t = new Tooltip(entry.getPieValue()+ " : "+entry.getName());
+            t.setStyle("-fx-background-color:#3D9ADA");
+            Tooltip.install(entry.getNode(), t);
+        }
+        tfNbDemandesLesAides.setText(String.valueOf(servicesDemandes.getNombreDemandesStatutDeux()));
+    }
 }
-
-

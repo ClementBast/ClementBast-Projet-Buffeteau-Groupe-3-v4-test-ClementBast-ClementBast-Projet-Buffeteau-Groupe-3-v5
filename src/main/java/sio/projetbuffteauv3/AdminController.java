@@ -149,10 +149,7 @@ public class AdminController implements Initializable {
     }
 
     @javafx.fxml.FXML
-    public void btnSousMatAdminClicked(Event event) {
-        apSousMatAdmin.toFront();
-
-    }
+    public void btnSousMatAdminClicked(Event event) {apSousMatAdmin.toFront();}
 
     @javafx.fxml.FXML
     public void btnSalleAdminClicked(Event event) throws SQLException {
@@ -164,7 +161,7 @@ public class AdminController implements Initializable {
     @javafx.fxml.FXML
     public void btnSoutienClicked(Event event) throws SQLException {
         apSoutienAdmin.toFront();
-        ObservableList<Demande> demandes = servicesAdministrateur.getDemandesWithStatusOne();
+        ObservableList<Demande> demandes = servicesAdministrateur.getDemandesWithStatusDeux();
         tvListeSoutienAdmin.setItems(demandes);
 
 
@@ -203,8 +200,6 @@ public class AdminController implements Initializable {
             tcListeMatAdmin.setCellValueFactory(new PropertyValueFactory<Matiere, String>("matiere"));
             tcListeMatieresSousMat.setCellValueFactory(new PropertyValueFactory<Matiere, String>("matiere"));
 
-
-
             servicesMatieres = new ServicesMatieres();
             tvListeMatAdmin.setItems(servicesMatieres.getAllMatieres());
             tvListeMatieresSousMat.setItems(servicesMatieres.getAllMatieres());
@@ -237,29 +232,21 @@ public class AdminController implements Initializable {
 
     }
 
-
-
+    @javafx.fxml.FXML
+    public void btnCreerMatiereAdminClicked(Event event) {apCreerMatiere.toFront();}
 
     @javafx.fxml.FXML
-    public void btnCreerMatiereAdminClicked(Event event) {apCreerMatiere.toFront();
-    }
-
-
-    @javafx.fxml.FXML
-    public void btnModifSousMatAdminClicked(Event event) {apModifSousMatiere.toFront();
+    public void btnModifSousMatAdminClicked(Event event) {
+        apModifSousMatiere.toFront();
         Matiere matiereSelectionnee = (Matiere) tvListeMatieresSousMat.getSelectionModel().getSelectedItem();
         Matiere sousMatSelec = (Matiere) tvListeSousMatAdmin.getSelectionModel().getSelectedItem();
         tfMatSelec2.setText(matiereSelectionnee.getMatiere());
         tfSousMatAModif.setText(sousMatSelec.getSousMatiere());
-
-
-
-
     }
 
     @javafx.fxml.FXML
-    public void btnCreerSousMatAdminClicked(Event event) {apCreerSousMatiere.toFront();
-
+    public void btnCreerSousMatAdminClicked(Event event) {
+        apCreerSousMatiere.toFront();
         Matiere matiereSelectionnee = (Matiere) tvListeMatieresSousMat.getSelectionModel().getSelectedItem();
         tfMatSelectCreerSousMat.setText(matiereSelectionnee.getMatiere());
     }
@@ -300,27 +287,30 @@ public class AdminController implements Initializable {
 
 
     @javafx.fxml.FXML
-    public void btnModifNumSalleClicked(Event event) {
-    }
+    public void btnModifNumSalleClicked(Event event) {apSalleAdmin.toFront();}
 
     @javafx.fxml.FXML
-    public void btnCreerSalleAdminClicked(Event event) throws SQLException { apCreerSalle.toFront();
+    public void btnCreerSalleAdminClicked(Event event) throws SQLException { apCreerSalle.toFront();}
 
-
-    }
 
     @javafx.fxml.FXML
-    public void btnModifSalleAdminClicked(Event event) throws SQLException { apModifSalle.toFront();
+    public void btnModifSalleAdminClicked(Event event) throws SQLException {
+        apModifSalle.toFront();
 
         Salle salle = (Salle) tvListeSalleAdmin.getSelectionModel().getSelectedItem();
-        tfNumSalle.setText(salle.getCodeSalle());
+        String currentCodeSalle = salle.getCodeSalle().replace("Salle ", "");
+        tfNumSalle.setText(currentCodeSalle);
 
-        int codeSalle = Integer.parseInt(tfNouveauNumSalle.getText());
-        int idSalle = salle.getId();
+        try {
+            int codeSalle = Integer.parseInt(tfNouveauNumSalle.getText().trim());
+            int idSalle = salle.getId();
 
-        servicesAdministrateur.renommerSalle(codeSalle, codeSalle);
-
+            servicesAdministrateur.renommerSalle(idSalle, codeSalle);
+        } catch (NumberFormatException ex) {
+            System.out.println("Veuillez entrer un numéro valide.");
+        }
     }
+
 
     @javafx.fxml.FXML
     public void btnRenommerSousMatClicked(Event event) throws SQLException {
@@ -336,6 +326,5 @@ public class AdminController implements Initializable {
         int newSalle = Integer.parseInt(tfCreerSalle.getText());
         servicesAdministrateur.creerSalle(newSalle);
     }
-
 
 }

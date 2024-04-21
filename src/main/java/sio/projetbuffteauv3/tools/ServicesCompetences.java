@@ -60,19 +60,7 @@ public class ServicesCompetences implements Initializable {
         }
         return lesSousMatCompetences;
     }
-    public int getIdCompetenceFromDemande(int idDemande) throws SQLException {
-        ps = uneCnx.prepareStatement( "SELECT c.id " +
-                "FROM competence c " +
-                "JOIN demande d ON c.sous_matiere = d.sous_matiere " +
-                "WHERE d.id = ?");
-        ps.setInt(1, idDemande);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("id");
-        } else {
-            throw new SQLException("echec");
-        }
-    }
+
     public void insererCompetence(String matiere, int idUtilisateur, String sousMat) throws SQLException {
         // Vérifier si la compétence existe déjà pour cet utilisateur et cette matière
         boolean competenceExistante = checkCompetenceExistante(matiere, idUtilisateur);
@@ -131,23 +119,7 @@ public class ServicesCompetences implements Initializable {
             return "";
         }
     }
-    private boolean checkSousMatieresExistantes(String matiere, int idUtilisateur) throws SQLException {
-        ps = uneCnx.prepareStatement("SELECT sous_matiere FROM competence WHERE id_matiere = (SELECT id FROM matiere WHERE designation = ?) AND id_user = ?");
-        ps.setString(1, matiere);
-        ps.setInt(2, idUtilisateur);
 
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            // Récupérons les sous-matières existantes
-            String sousMatieresExistantes = rs.getString(1);
-
-            // Vérifions si des sous-matières existent
-            return sousMatieresExistantes != null && !sousMatieresExistantes.isEmpty();
-        } else {
-            return false;
-        }
-    }
 
     public void supprimerCompetence(String matiere, int idUtilisateur) throws SQLException {
         ps = uneCnx.prepareStatement("DELETE FROM competence WHERE id_matiere = (SELECT id FROM matiere WHERE designation = ?) AND id_user = ?");
@@ -177,5 +149,17 @@ public class ServicesCompetences implements Initializable {
         return idCompetence;
     }
 
-
+    public int getIdCompetenceFromDemande(int idDemande) throws SQLException {
+        ps = uneCnx.prepareStatement( "SELECT c.id " +
+                "FROM competence c " +
+                "JOIN demande d ON c.sous_matiere = d.sous_matiere " +
+                "WHERE d.id = ?");
+        ps.setInt(1, idDemande);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("id");
+        } else {
+            throw new SQLException("echec");
+        }
+    }
 }
