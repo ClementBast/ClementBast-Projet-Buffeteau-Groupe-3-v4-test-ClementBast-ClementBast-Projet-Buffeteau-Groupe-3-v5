@@ -26,7 +26,8 @@ public class ServicesDemandes {
                 "SELECT matiere.designation, demande.sous_matiere, demande.id, demande.date_updated\n" +
                         "FROM demande\n" +
                         "INNER JOIN matiere ON demande.id_matiere = matiere.id\n" +
-                        "GROUP BY matiere.designation, demande.date_updated, demande.id;");
+                        "WHERE demande.status = 1\n" +
+                        "GROUP BY matiere.designation, demande.date_updated, demande.id;\n");
 
 
         rs = ps.executeQuery();

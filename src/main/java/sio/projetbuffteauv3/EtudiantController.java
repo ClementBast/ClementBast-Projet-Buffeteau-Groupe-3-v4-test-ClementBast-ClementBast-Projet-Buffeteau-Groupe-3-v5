@@ -458,10 +458,40 @@ public class EtudiantController implements Initializable {
         }
     }
 
+    // Définir la méthode checkAssistanceAllowed en dehors de la méthode btnValiderLesAidesClicked
+    private boolean checkAssistanceAllowed(int niveauUtil, int niveauDemande) {
+        // Règles pour chaque niveau
+        switch (niveauUtil) {
+            case 1:
+                // Un étudiant de niveau 1 peut porter assistance à un étudiant de niveau 3 ou plus
+                return niveauDemande >= 3;
+            case 2:
+                // Un étudiant de niveau 2 peut porter assistance à un étudiant de niveau 4 ou plus
+                return niveauDemande >= 4;
+            case 3:
+                // Un étudiant de niveau 3 peut porter assistance à un étudiant de niveau 5 ou plus
+                return niveauDemande >= 5;
+            case 4:
+                // Un étudiant de niveau 4 peut porter assistance à un étudiant de niveau 6 ou plus
+                return niveauDemande >= 6;
+            case 5:
+                // Un étudiant de niveau 5 peut porter assistance à un étudiant de niveau 7 ou plus
+                return niveauDemande >= 7;
+            case 6:
+                // Un étudiant de niveau 6 peut porter assistance à un étudiant de niveau 8 ou plus
+                return niveauDemande >= 8;
+            case 7:
+                // Un étudiant de niveau 7 peut porter assistance à un étudiant de niveau 9 ou plus
+                return niveauDemande >= 9;
+            default:
+                return false; // Autres cas ne sont pas autorisés
+        }
+    }
+
 
 
     @javafx.fxml.FXML
-    public void btnValiderLesAidesClicked(Event event) throws SQLException  {
+    public void btnValiderLesAidesClicked(Event event) throws SQLException {
         Demande selectedDemande = (Demande) tvLesAides.getSelectionModel().getSelectedItem();
         ServiceSoutien serviceSoutien = new ServiceSoutien();
         Date datedebut = Date.valueOf(LocalDate.parse("2023-12-12"));
@@ -469,10 +499,24 @@ public class EtudiantController implements Initializable {
         int idDemande = selectedDemande.getId();
         String com = tfCommentaireLesAides.getText();
 
+        int niveauUtil = serviceUtilisateur.getNiveauUtilisateurByMail(unUtilisateur.getEmail());
+        int niveauDemande = serviceUtilisateur.getNiveauUtilisateurByIdDemande(selectedDemande.getId());
 
-
-        serviceSoutien.insererSoutien(idDemande, idCompetence, datedebut, datedebut, com, 1);
+        if (checkAssistanceAllowed(niveauUtil, niveauDemande)) {
+            // Insérer le soutien si l'utilisateur a le niveau requis
+            serviceSoutien.insererSoutien(idDemande, idCompetence, datedebut, datedebut, com, 1);
+        } else {
+            // Afficher un message d'erreur si l'utilisateur n'a pas le niveau requis
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur de niveau");
+            alert.setContentText("Vous n'avez pas le niveau requis pour traiter cette demande ou porter assistance à un niveau inférieur.");
+            alert.setHeaderText("");
+            alert.showAndWait();
+        }
     }
+
+
+
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         try {
